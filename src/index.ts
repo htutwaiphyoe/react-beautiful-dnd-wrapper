@@ -1,1 +1,1 @@
-export { default as DragAndDrop } from "./components/DragAndDrop";
+export { default as DragAndDrop } from "./DragAndDrop";

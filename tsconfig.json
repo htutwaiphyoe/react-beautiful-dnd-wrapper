@@ -1,16 +1,23 @@
 {
   "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["dom", "esnext"],
     "jsx": "react-jsx",
-    "composite": true,
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
-    "skipLibCheck": true,
-    "target": "ES5",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true,
     "strict": true,
-    "noEmit": true,
-    "typeRoots": ["./dist/index.d.ts", "node_modules/@types"]
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["vite.config.ts", "src"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -11,21 +11,17 @@ export default defineConfig({
       entry: path.resolve(__dirname, "src/index.ts"),
     },
     rollupOptions: {
-      external: ["react", "react-dom"],
+      external: ["react", "react-dom", "react-beautiful-dnd"],
       output: {
         globals: {
           react: "React",
           "react-dom": "ReactDOM",
+          "react-beautiful-dnd": "ReactBeautifulDnd",
         },
       },
     },
     sourcemap: true,
     emptyOutDir: true,
-  },
-  esbuild: {
-    loader: "tsx",
-    include: /src\/.*\.tsx?$/,
-    jsx: "automatic",
   },
   plugins: [react(), dts()],
 });
