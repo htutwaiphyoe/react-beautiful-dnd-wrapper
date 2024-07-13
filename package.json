@@ -1,7 +1,7 @@
 {
   "name": "react-beautiful-dnd-wrapper",
   "private": false,
-  "version": "1.0.6",
+  "version": "1.0.7",
   "author": "Htut Wai Phyo",
   "description": "A simplified wrapper component of react-beautiful-dnd library for single and nested level drag and drop",
   "type": "module",
