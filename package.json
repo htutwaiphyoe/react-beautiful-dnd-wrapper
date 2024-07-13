@@ -20,6 +20,9 @@
     "react-beautiful-dnd",
     "react-beautiful-dnd-wrapper"
   ],
+  "repository": {
+    "url": "https://github.com/htutwaiphyoe/react-beautiful-dnd-wrapper"
+  },
   "files": [
     "/dist"
   ],
