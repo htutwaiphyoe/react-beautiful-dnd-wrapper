@@ -2,6 +2,8 @@
 
 A simplified component that wraps the react-beautiful-dnd library, providing single and nested levels drag and drop functionalities.
 
+[Video](https://github.com/user-attachments/assets/f96edfa6-31d7-41d5-a540-16ef9aeff921)
+
 ## CAUTION ⚠️
 
 Current react-beautiful-dnd library is not supported for `react > 18`. Please Update `strictMode` setting to `false`.
