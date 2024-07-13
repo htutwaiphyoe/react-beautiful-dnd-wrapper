@@ -79,6 +79,7 @@ type DroppableWrapperProps<T extends { id: string }> = {
   className?: string;
   droppableId: string;
   type: "parent" | "child";
+  style?: React.CSSProperties;
   renderEmpty?: () => React.ReactNode;
   children?:
     | React.ReactNode
@@ -86,7 +87,7 @@ type DroppableWrapperProps<T extends { id: string }> = {
         item: T;
         index: number;
         provided: DraggableProvided;
-        renderDragHandler: (DragHandler: React.ReactNode) => React.ReactNode;
+        DragHandler: React.FC<PropsWithChildren>;
       }) => React.ReactNode);
 };
 
@@ -95,6 +96,7 @@ function DroppableWrapper<T extends { id: string }>({
   list,
   children,
   className,
+  style = {},
   droppableId,
   renderEmpty,
 }: DroppableWrapperProps<T>) {
@@ -102,13 +104,18 @@ function DroppableWrapper<T extends { id: string }>({
     <Droppable droppableId={droppableId} type={type}>
       {(provided) => (
         <div
-          {...provided.droppableProps}
+          style={style}
           className={className}
           ref={provided.innerRef}
+          {...provided.droppableProps}
         >
           {list.map((item, index) => {
             return (
-              <Draggable key={item.id} draggableId={item.id} index={index}>
+              <Draggable
+                index={index}
+                draggableId={item.id}
+                key={`${item.id}-${droppableId}`}
+              >
                 {(provided) => {
                   return (
                     <div ref={provided.innerRef} {...provided.draggableProps}>
@@ -117,11 +124,9 @@ function DroppableWrapper<T extends { id: string }>({
                             item,
                             index,
                             provided,
-                            renderDragHandler: (
-                              DragHandler: React.ReactNode
-                            ) => (
+                            DragHandler: ({ children }) => (
                               <div {...provided.dragHandleProps}>
-                                {DragHandler}
+                                {children}
                               </div>
                             ),
                           })
