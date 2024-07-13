@@ -4,7 +4,7 @@ A simplified component that wraps the react-beautiful-dnd library, providing sin
 
 ## CAUTION ⚠️
 
-react-beautiful-dnd library currently is not supported for `react > 18`.
+Current react-beautiful-dnd library is not supported for `react > 18`. Please Update `strictMode` setting to `false`.
 
 ## Installation
 
@@ -20,140 +20,152 @@ pnpm install react-beautiful-dnd-wrapper
 
 ## Usage
 
-Here's how to use the components provided by the `react-beautiful-dnd-wrapper` library.
+Here's examples of components provided by the `react-beautiful-dnd-wrapper` library.
 
 ### Basic Drag and Drop
 
 ```tsx
-import React, { useState } from "react";
+import { useState } from "react";
+import { DragIndicatorSVG } from "@/icons";
 import { DragAndDrop } from "react-beautiful-dnd-wrapper";
 
-const App = () => {
-  const [items, setItems] = useState([
-    { id: "item-1", content: "Item 1" },
-    { id: "item-2", content: "Item 2" },
-    { id: "item-3", content: "Item 3" },
-  ]);
-
-  const onParentSort = (sortedItems) => {
-    setItems(sortedItems);
-  };
-
-  return (
-    <DragAndDrop
-      list={items}
-      type="parent"
-      droppableId="droppable"
-      onParentSort={onParentSort}
-    >
-      {({ item,  DragHandler }) => (
-        <DragHandler>
-          <div>{item.content}</div>
-        </DragHandler>
-      )}
-    </DragAndDrop>
-  );
+type Item = {
+  id: string;
+  label: string;
 };
 
-export default App;
+export default function Home() {
+  const [list, setList] = useState<Item[]>([
+    { id: "Item-1", label: "Item 1" },
+    { id: "Item-2", label: "Item 2" },
+    { id: "Item-3", label: "Item 3" },
+    { id: "Item-4", label: "Item 4" },
+  ]);
+
+  return (
+    <DragAndDrop<Item>
+      list={list}
+      type="parent"
+      droppableId="parent"
+      onParentSort={(list) => setList(list)}
+      className="grid gap-5 border bg-white p-10"
+    >
+      {({ item, DragHandler }) => {
+        return (
+          <div className="flex w-80 bg-slate-200 items-center space-x-5 bg-off-white p-5">
+            <DragHandler>
+              <DragIndicatorSVG />
+            </DragHandler>
+            <span>{item.label}</span>
+          </div>
+        );
+      }}
+    </DragAndDrop>
+  );
+}
 ```
 
 ### Nested Drag and Drop
 
 ```tsx
-import React, { useState } from "react";
-import DragAndDrop from "react-beautiful-dnd-wrapper";
+import { useState } from "react";
+import { DragIndicatorSVG } from "@/icons";
+import { DragAndDrop } from "react-beautiful-dnd-wrapper";
 
-const App = () => {
-  const [categories, setCategories] = useState([
+type Item = {
+  id: string;
+  label: string;
+};
+
+type List = {
+  id: string;
+  label: string;
+  items: Item[];
+};
+
+export default function Nested() {
+  const [list, setList] = useState<List[]>([
     {
       id: "category-1",
+      label: "Category 1",
       items: [
-        { id: "item-1", content: "Item 1" },
-        { id: "item-2", content: "Item 2" },
+        { id: "item-1", label: "Item 1" },
+        { id: "item-2", label: "Item 2" },
       ],
     },
     {
       id: "category-2",
-      items: [
-        { id: "item-3", content: "Item 3" },
-        { id: "item-4", content: "Item 4" },
-      ],
+      label: "Category 2",
+      items: [],
     },
   ]);
 
-  const onParentSort = (sortedCategories) => {
-    setCategories(sortedCategories);
-  };
-
-  const onSameParentChildSort = (parentId, sortedItems) => {
-    setCategories((prevCategories) =>
-      prevCategories.map((category) =>
-        category.id === parentId
-          ? { ...category, items: sortedItems }
-          : category
-      )
-    );
-  };
-
-  const onDifferentParentChildSort = ({
-    sourceParentId,
-    destinationParentId,
-    sourceItems,
-    destinationItems,
-  }) => {
-    setCategories((prevCategories) =>
-      prevCategories.map((category) => {
-        if (category.id === sourceParentId) {
-          return { ...category, items: sourceItems };
-        }
-        if (category.id === destinationParentId) {
-          return { ...category, items: destinationItems };
-        }
-        return category;
-      })
-    );
-  };
-
-
   return (
-    <DragAndDrop.Nested
+    <DragAndDrop.Nested<List, Item>
+      className="grid gap-5 border bg-white p-10"
+      list={list}
+      droppableId="parent"
       type="parent"
-      list={categories}
-      onParentSort={onParentSort}
-      droppableId="nested-droppable"
-      onSameParentChildSort={onSameParentChildSort}
-      onDifferentParentChildSort={onDifferentParentChildSort}
+      onParentSort={(list) => setList(list)}
+      onSameParentChildSort={(id, items) => {
+        setList((state) =>
+          state.map((item) => (item.id === id ? { ...item, items } : item))
+        );
+      }}
+      onDifferentParentChildSort={({
+        sourceItems,
+        sourceParentId,
+        destinationItems,
+        destinationParentId,
+      }) => {
+        setList((state) =>
+          state.map((item) =>
+            item.id === sourceParentId
+              ? { ...item, items: sourceItems }
+              : item.id === destinationParentId
+              ? { ...item, items: destinationItems }
+              : item
+          )
+        );
+      }}
     >
-      {({ item, provided, DragHandler }) => (
-        <div>
-          <DragHandler>
-            <DragIcon>
-          </DragHandler>
-          <h3>{item.id}</h3>
-           <DragAndDrop.Droppable
-              type="child"
-              list={item.items}
-              droppableId={item.id}
-              renderEmpty={function(){
-                return <div>No items available!</div>
-              }}
-            >
-                {({ item, provided, DragHandler }) => (
-                  <div>
-                    <DragHandler>
-                      <div>{item.content}</div>
-                    </DragHandler>
+      {({ item, DragHandler }) => {
+        return (
+          <div className="grid w-96 gap-5 bg-slate-200 p-5">
+            <div className="flex items-center space-x-5">
+              <DragHandler>
+                <DragIndicatorSVG />
+              </DragHandler>
+              <span>{item.label}</span>
+            </div>
+            <div className="bg-white p-5">
+              <DragAndDrop.Droppable
+                type="child"
+                list={item.items}
+                droppableId={item.id}
+                className="grid gap-5"
+                renderEmpty={() => (
+                  <div className="bg-slate-200 p-5 text-center">
+                    No item available!
                   </div>
                 )}
-            </DragAndDrop.Droppable>   
-        </div>
-      )}
+              >
+                {({ item, DragHandler }) => (
+                  <div className="flex bg-slate-300 items-center space-x-5 bg-off-white p-5">
+                    <DragHandler>
+                      <DragIndicatorSVG />
+                    </DragHandler>
+                    <span>{item.label}</span>
+                  </div>
+                )}
+              </DragAndDrop.Droppable>
+            </div>
+          </div>
+        );
+      }}
     </DragAndDrop.Nested>
   );
-};
-
-export default App;
+}
 ```
 
 ## API
@@ -162,15 +174,16 @@ export default App;
 
 The main component for creating drag-and-drop functionality.
 
-Props
-`list`: An array of items to be draggable.
-`onParentSort`: A function called when the items are reordered.
-`className`: Optional class name for the droppable container.
-`droppableId`: The ID of the droppable container.
-`type`: The type of the droppable area ("parent" or "child").
-`style`: Optional inline styles for the droppable container.
-`renderEmpty`: Optional function to render when the list is empty.
-`children`: A function that renders the draggable items.
+| Prop            | Description                                          |
+|-----------------|------------------------------------------------------|
+| `list`          | An array of items to be draggable.                   |
+| `onParentSort`  | A function called when the items are reordered.      |
+| `className`     | Optional class name for the droppable container.     |
+| `droppableId`   | The ID of the droppable container.                   |
+| `type`          | The type of the droppable area ("parent" or "child").|
+| `style`         | Optional inline styles for the droppable container.  |
+| `renderEmpty`   | Optional function to render when the list is empty.  |
+| `children`      | A function that renders the draggable items.         |
 
 ### DragAndDrop.Nested
 
@@ -178,16 +191,18 @@ A component for nested drag-and-drop functionality.
 
 #### Props
 
-`list`: An array of categories, each containing an array of items.
-`onParentSort`: A function called when the categories are reordered.
-`onSameParentChildSort`: A function called when items within the same category are reordered.
-`onDifferentParentChildSort`: A function called when items are moved between different categories.
-`className`: Optional class name for the droppable container.
-droppableId: The ID of the droppable container.
-`type`: The type of the droppable area ("parent" or "child").
-style: Optional inline styles for the droppable container.
-`renderEmpty`: Optional function to render when the list is empty.
-`children`: A function that renders the draggable items
+| Prop                          | Description                                                           |
+|-------------------------------|-----------------------------------------------------------------------|
+| `list`                        | An array of categories, each containing an array of items.            |
+| `onParentSort`                | A function called when the categories are reordered.                  |
+| `onSameParentChildSort`       | A function called when items within the same category are reordered.  |
+| `onDifferentParentChildSort`  | A function called when items are moved between different categories.  |
+| `className`                   | Optional class name for the droppable container.                      |
+| `droppableId`                 | The ID of the droppable container.                                    |
+| `type`                        | The type of the droppable area ("parent" or "child").                 |
+| `style`                       | Optional inline styles for the droppable container.                   |
+| `renderEmpty`                 | Optional function to render when the list is empty.                   |
+| `children`                    | A function that renders the draggable items.                          |
 
 ## License
 
