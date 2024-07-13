@@ -45,20 +45,11 @@ function orderDifferentList<T extends { id: string; items: I[] }, I>({
     (item) => item.id === destinationParentId
   ) as T;
 
-  let newSourceCategoryPackages = [...sourceCategory.items];
+  const newSourceCategoryPackages = [...sourceCategory.items];
   const [draggedItem] = newSourceCategoryPackages.splice(sourceIndex, 1);
 
-  let newDestCategoryPackages = [...destCategory.items];
+  const newDestCategoryPackages = [...destCategory.items];
   newDestCategoryPackages.splice(destinationIndex, 0, draggedItem);
-
-  newSourceCategoryPackages = newSourceCategoryPackages.map((item, i) => ({
-    ...item,
-    orderNo: i + 1,
-  }));
-  newDestCategoryPackages = newDestCategoryPackages.map((item, i) => ({
-    ...item,
-    orderNo: i + 1,
-  }));
 
   return {
     sourceItems: newSourceCategoryPackages,

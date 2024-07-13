@@ -1,9 +1,9 @@
 {
   "name": "react-beautiful-dnd-wrapper",
   "private": false,
-  "version": "1.0.9",
+  "version": "1.1.0",
   "author": "Htut Wai Phyo",
-  "description": "A simplified wrapper component of react-beautiful-dnd library for single and nested level drag and drop",
+  "description": "A simplified wrapper component of react-beautiful-dnd library",
   "type": "module",
   "main": "dist/index.umd.js",
   "module": "dist/index.es.js",
@@ -50,5 +50,6 @@
     "@vitejs/plugin-react": "^4.3.1",
     "typescript": "^5.2.2",
     "vite": "^5.3.1"
-  }
+  },
+  "license": "MIT"
 }
